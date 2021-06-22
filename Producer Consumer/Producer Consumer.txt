@@ -1,0 +1,92 @@
+Aim:Write a program in producer consumer.
+
+Algorithm:
+
+Step-1: Declare the size of the buffer.
+
+Step-2: The producer will write the required data onto the buffer.
+
+Step-3: Once the data is written onto the buffer the producer goes to sleep and the consumer is notified to wake up and start reading the data from the buffer.
+
+Step-4: If the data is written onto the buffer then the consumer starts reading the data from the buffer or the queue.
+
+Step-5: Once the data is read from the buffer then the consumer goes to sleep and the producer is notified to wake up and start writing data again in the buffer.
+
+Program:
+#include <stdio.h>
+#include <stdlib.h>
+  
+int mutex = 1;
+int full = 0;
+int empty = 10, x = 0;
+void producer()
+{
+    
+    --mutex;
+
+    ++full;
+ 
+    --empty;
+  
+    x++;
+    printf("\nProducer produces item %d",x);
+    ++mutex;
+}
+  
+void consumer()
+{
+    --mutex;
+  
+    --full;
+
+    ++empty;
+    printf("\nConsumer consumes item %d",
+           x);
+    x--;
+    ++mutex;
+}
+  
+
+int main()
+{
+    int n, i;
+    printf("\n1. Press 1 for Producer"
+           "\n2. Press 2 for Consumer"
+           "\n3. Press 3 for Exit");
+
+#pragma omp critical
+  
+    for (i = 1; i > 0; i++) {
+  
+        printf("\nEnter your choice:");
+        scanf("%d", &n);
+  
+        switch (n) {
+        case 1:
+
+            if ((mutex == 1)
+                && (empty != 0)) {
+                producer();
+            }
+
+            else {
+                printf("Buffer is full!");
+                
+            }
+            break;
+  
+        case 2:
+
+               if ((mutex == 1) && (full != 0)) {
+                consumer();
+            }
+            else {
+                printf("Buffer is empty!");
+            }
+            break;
+        case 3:
+            exit(0);
+            break;
+        }
+    }
+}
